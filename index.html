@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Smart IoT Kitchen Scale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <style>
+        * {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif;}
+        body {background:#f4f6f8; color:#333; scroll-behavior: smooth;}
+        nav {background:#fff; padding:15px 40px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        nav h2 {color:#4ca1af;}
+        nav ul {list-style:none; display:flex; gap:20px;}
+        nav ul li a {text-decoration:none; color:#333; font-weight:500;}
+        header {background:#C2B79B; color:white; text-align:center; padding:60px 20px;}
+        header h1 {font-size:42px; margin-bottom: 20px;}
+        header h3 {color:#7a552b; font-size:31px; margin-bottom: 24px;}
+        header p {color:#7a552b; margin-top:10px; opacity:0.9; font-size:17px;}
+        section {padding:50px 40px;}
+        .card {background:white; padding:25px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:20px;}
+        .section-title {text-align:center; margin-bottom:30px; font-size:28px; color:#4ca1af;}
+        .weight-box {background:white; max-width:400px; margin:auto; padding:40px; border-radius:12px; box-shadow:0 6px 15px rgba(0,0,0,0.12); text-align:center;}
+        .weight-box .weight {font-size:48px; color:#2c3e50; margin-top:15px; font-weight:bold;}
+        .status-box {margin-top:20px; padding:15px; border-radius:30px; color:white; font-weight:bold; transition: 0.3s; font-size:18px;}
+        .recipe-box {max-width:900px; margin:auto; background:white; border-radius:12px; padding:30px; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+        .recipe-box h2 {color:#c48d4f; margin-bottom:15px;}
+        .recipe-box h1 {color:#4ca1af; margin-bottom:15px;}
+        .recipe-box ul {list-style:none;}
+        .recipe-box ul li {background:#f1f3f5; padding:12px; margin-bottom:10px; border-radius:6px;}
+        footer {background:#2c3e50; color:white; text-align:center; padding:15px; margin-top:40px;}
+    </style>
+</head>
+<body>
+
+<nav>
+    <h2>SmartScale</h2>
+    <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#weight">Live Monitor</a></li>
+        <li><a href="#recipes">Recipes</a></li>
+        <li><a href="#about">About</a></li>
+    </ul>
+</nav>
+
+<header id="home">
+    <h1>Smart IoT Kitchen Weighing Machine</h1>
+    <h3>Presented By QMM Tech</h3>
+    <p>Accurate • Smart • Recipe Guided Cooking</p>
+</header>
+
+<section id="weight">
+    <h2 class="section-title">Live Weight Monitor</h2>
+    <div class="weight-box">
+        <p>Current Weight</p>
+        <div class="weight" id="liveWeight">Connecting...</div>
+        <div id="btnStatusBox" class="status-box" style="background:#dc3545;">Button Not Pressed</div>
+        <p style="margin-top:15px; font-size:12px; opacity:0.6;">(Real-time Data via Firebase Cloud)</p>
+    </div>
+</section>
+
+<section id="recipes">
+    <h2 class="section-title">Recipes</h2>
+    <div class="recipe-box">
+        <h1>Coffee Recipe</h1>
+        <h2>Ingredients</h2>
+        <ul>
+            <li>☕ Coffee Powder – 10 g</li>
+            <li>🥛 Milk – 200 ml</li>
+            <li>🍬 Sugar – 5 g</li>
+            <li>💧 Water – 50 ml</li>
+        </ul>
+        <h1>Brownies</h1>
+        <h2>Ingredients</h2>
+        <ul>
+            <li>Flour – 120 g</li>
+            <li>Sugar – 100 g</li>
+            <li>Cocoa Powder – 25 g</li>
+        </ul>
+    </div>
+</section>
+
+<section id="about">
+    <h2 class="section-title">Project Team</h2>
+    <div class="card">
+        <p><strong>Members:</strong> Qurat-ul-ain (2510182), Maheen (2510201), Mahnoor (2510249)</p>
+        <p><strong>Subject:</strong> AICT | <strong>Tech:</strong> ESP8266, Firebase, IoT</p>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 Smart IoT Kitchen Scale | AICT Project</p>
+</footer>
+
+<script>
+  // Your Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyAW0b9u_4yZcJwLcBnZR4pW-jSjdeyzizI",
+    databaseURL: "https://smartscale-b7b07-default-rtdb.firebaseio.com"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Reference to Database
+  var database = firebase.database();
+
+  // Listen for Live Weight Updates
+  database.ref("weight").on("value", (snapshot) => {
+    const val = snapshot.val();
+    document.getElementById("liveWeight").innerText = (val !== null ? val : "0.0") + " g";
+  });
+
+  // Listen for Button Status Updates
+  database.ref("status").on("value", (snapshot) => {
+    const status = snapshot.val();
+    const box = document.getElementById("btnStatusBox");
+    if (status === "Pressed") {
+      box.innerText = "Button Pressed";
+      box.style.background = "#28a745"; // Green
+    } else {
+      box.innerText = "Button Not Pressed";
+      box.style.background = "#dc3545"; // Red
+    }
+  });
+</script>
+
+</body>
+</html>
