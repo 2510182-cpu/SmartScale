@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Smart IoT Kitchen Scale   </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+var firebaseConfig = {
+  apiKey: "weight",
+  databaseURL: "https://smartweightmachine-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+</script>
+ 
+    <style>
+        * {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif;}
+        body {background:#f4f6f8; color:#333; scroll-behavior: smooth;}
+        nav {background:#fff; padding:15px 40px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        nav h2 {color:#4ca1af;}
+        nav ul {list-style:none; display:flex; gap:20px;}
+        nav ul li a {text-decoration:none; color:#333; font-weight:500;}
+        header {background:linear-gradient(#C2B79B); color:white; text-align:center; padding:60px 20px;}
+        header h1 {font-size:42px;margin-bottom: 20px;}
+        header p {color:#7a552b; margin-top:10px; opacity:0.9;font-size:17px;}
+		header h3 {color:#7a552b;font-size:31px; margin-bottom: 24px;}
+        section {padding:50px 40px;}
+        .card {background:white; padding:25px;border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:20px;}
+        button, .btn {padding:12px 30px; background:#4ca1af; border:none; border-radius:25px; color:white; font-size:16px; cursor:pointer; text-decoration:none;}
+        footer {background:#2c3e50; color:white; text-align:center; padding:15px; margin-top:40px;}
+        .section-title {text-align:center; margin-bottom:30px; font-size:28px; color:#4ca1af;}
+        .features {display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:25px;}
+        .feature-card {background:white; padding:25px; border-radius:12px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+        .feature-card h3 {color:#c48d4f; margin-bottom:10px;}
+        .weight-box {background:white; max-width:400px; margin:auto; padding:40px; border-radius:12px; box-shadow:0 6px 15px rgba(0,0,0,0.12); text-align:center;}
+        .weight-box .weight {font-size:48px; color:#2c3e50; margin-top:15px;}
+        .recipe-box {max-width:900px; margin:auto; background:white; border-radius:12px; padding:30px; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+        .recipe-box h2 {color:#6f4e37; margin-bottom:15px;}
+        .recipe-box ul {list-style:none;}
+        .recipe-box ul li {background:#f1f3f5; padding:12px; margin-bottom:10px; border-radius:6px;}
+        .recipe-box h2 {color:#c48d4f; margin-bottom:15px;}
+		.recipe-box h1 {color:#4ca1af; margin-bottom:15px;}
+    </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+    <h2>SmartScale</h2>
+    <ul>
+        <li><a href="file:///C:/Users/qurat/OneDrive/Desktop/FOOD%20WEIGHING%20MACHINE.html#home">Home</a></li>
+        <li><a href="file:///C:/Users/qurat/OneDrive/Desktop/FOOD%20WEIGHING%20MACHINE.html#recipes">Recipes</a></li>
+        <li><a href="file:///C:/Users/qurat/OneDrive/Desktop/FOOD%20WEIGHING%20MACHINE.html#about">About</a></li>
+        <li><a href="file:///C:/Users/qurat/OneDrive/Desktop/FOOD%20WEIGHING%20MACHINE.html#contact">Contact</a></li>
+    </ul>
+</nav>
+
+<!-- HOME SECTION -->
+<header id="home">
+    <h1>Smart IoT Kitchen Weighing Machine</h1>
+	<h3>Presented By QMM Tech</h3>
+    <p>Accurate • Smart • Recipe Guided Cooking</p>
+</header>
+
+<section id="features">
+    <h2 class="section-title">Key Features</h2>
+    <div class="features">
+        <div class="feature-card">
+            <h3>Real-Time Weight</h3>
+            <p>View live weight updates directly on the website using IoT.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Recipe Guidance</h3>
+            <p>Step-by-step ingredient measurement for perfect cooking.</p>
+        </div>
+        <div class="feature-card">
+            <h3>User Friendly</h3>
+            <p>Simple, clean interface designed for ease of use.</p>
+        </div>
+    </div>
+</section>
+
+<section id="weight">
+    <h2 class="section-title">Live Weight Monitor</h2>
+    <div class="weight-box">
+        <p>Current Weight</p>
+        <div class="weight" id="liveWeight">452 g</div>
+        <p style="margin-top:10px; font-size:14px; opacity:0.7;">
+            (Data from ESP8266 &amp; Load Cell)
+        </p>
+    </div>
+</section>
+
+<section id="recipes">
+    <h2 class="section-title">Coffee Recipe</h2>
+    <div class="recipe-box">
+        <h2>Ingredients</h2>
+        <ul>
+            <li>☕ Coffee Powder – <strong>10 g</strong></li>
+            <li>🥛 Milk – <strong>200 ml</strong></li>
+            <li>🍬 Sugar – <strong>5 g</strong></li>
+            <li>💧 Water – <strong>50 ml</strong></li>
+        </ul>
+
+        <h2>Steps</h2>
+        <ul>
+            <li>Step 1: Place the cup on the smart scale and tare it.</li>
+            <li>Step 2: Add 10 g of coffee powder.</li>
+            <li>Step 3: Add 5 g of sugar.</li>
+            <li>Step 4: Pour 50 ml of hot water.</li>
+            <li>Step 5: Add 200 ml of milk and stir well.</li>
+        </ul>
+		
+    <h1 class="section-title">Brownies</h1>
+  
+        <h2>Ingredients</h2>
+        <ul>
+            <li>Flour – <strong>120 g</strong></li>
+            <li>Sugar – <strong>100 g</strong></li>
+            <li>Butter – <strong>80 g</strong></li>
+            <li>Milk – <strong>60 ml</strong></li>
+			<li>Baking powder– <strong>2 g</strong></li>
+			<li>Coco Powder – <strong>25 g</strong></li>
+        </ul>
+
+        <h2>Steps</h2>
+        <ul>
+            <li>Step 1: Place a bowl on the smart weight machine and reset (tare) the weight.</li>
+            <li>Step 2: Add 120 g flour slowly until the live weight matches the recipe value.</li>
+            <li>Step 3: Add 100 g sugar and 25 g cocoa powder and mix well.</li>
+            <li>Step 4: Melt 80 g butter and add it to the mixture.</li>
+            <li>Step 5: Add 60 ml milk and mix until smooth.</li>
+			<li>Step 6: Add ½ teaspoon baking powder and vanilla essence.</li>
+			<li>Step 7: Pour the batter into a baking pan.</li>
+			<li>Step 8: Bake at 180°C for 25–30 minutes.</li>
+			<li>Step 9: Let it cool and serve.</li>
+        </ul>
+       
+    </div>
+</section>
+
+ 
+<section id="about">
+    <h2 class="section-title">About Our Project</h2>
+    <div class="card">
+        <p>
+            This Smart IoT Kitchen Scale is developed as an AICT academic project
+            using ESP8266, Load Cell, HX711, and Firebase. It helps users measure
+            ingredients accurately and follow recipes efficiently.
+		    This project makes cooking and baking easier, smarter, and more precise.
+        </p>
+    </div>
+</section>
+
+
+<section id="contact">
+    <h2 class="section-title">Project Team</h2>
+    <div class="card">
+        <p><strong>Project:</strong> Smart IoT Kitchen Scale</p>
+		<p><strong>Members:</strong> Qurat-ul-ain(2510182), Maheen(2510201) , Mahnoor(2510249)</p>
+        <p><strong>Subject:</strong> AICT</p>
+        <p><strong>Technology:</strong> IoT, Firebase, ESP8266</p>
+    </div>
+</section>
+
+
+<footer>
+    <p>© 2026 Smart IoT Kitchen Scale | AICT Project</p>
+</footer>
+
+
+<script>
+    
+    let weight = 0;
+    let recipeWeight = 0;
+    setInterval(() => {
+        weight = Math.floor(Math.random() * 500);
+        recipeWeight = Math.floor(Math.random() * 300);
+        document.getElementById("liveWeight").innerText = weight + " g";
+        document.getElementById("recipeWeight").innerText = recipeWeight + " g";
+    }, 2000);
+</script>
+
+<script>
+firebase.database().ref("weight").on("value", function(snapshot){
+  document.getElementById("liveWeight").innerHTML =
+    snapshot.val() + " g";
+});
+</script>
+
+
+
+
+
+
+</body></html>
